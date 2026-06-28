@@ -1,13 +1,12 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
-from sqlalchemy import Boolean
 
 from app.database import Base
 
 
-class Customer(Base):
-    __tablename__ = "customers"
+class Admin(Base):
+    __tablename__ = "admins"
 
     id = Column(
         Integer,
@@ -29,14 +28,4 @@ class Customer(Base):
     password = Column(
         String,
         nullable=False
-    )
-
-    phone = Column(
-        String,
-        nullable=False
-    )
-
-    is_active = Column(
-        Boolean,
-        default=True
     )

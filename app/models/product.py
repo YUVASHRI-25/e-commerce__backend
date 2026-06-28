@@ -40,3 +40,8 @@ class Product(Base):
         Integer,
         ForeignKey("categories.id")
     )
+
+    image_url = Column(
+        String,
+        nullable=True
+    )
