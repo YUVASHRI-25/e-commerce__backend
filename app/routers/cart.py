@@ -12,7 +12,8 @@ from app.models.customer import Customer
 
 from app.schemas.cart import (
     CartCreate,
-    CartUpdate
+    CartUpdate,
+    CartResponse
 )
 
 from app.routers.auth import (
@@ -57,17 +58,19 @@ def add_to_cart(
     existing_item = (
         db.query(CartItem)
         .filter(
-            CartItem.customer_id ==
-            current_customer.id,
-            CartItem.product_id ==
-            cart.product_id
+            CartItem.customer_id == current_customer.id,
+            CartItem.product_id == cart.product_id
         )
         .first()
     )
 
     if existing_item:
+
         existing_item.quantity += cart.quantity
+
         db.commit()
+
+        db.refresh(existing_item)
 
         return {
             "message": "Cart updated"
@@ -80,7 +83,9 @@ def add_to_cart(
     )
 
     db.add(new_item)
+
     db.commit()
+
     db.refresh(new_item)
 
     return {
@@ -89,7 +94,10 @@ def add_to_cart(
     }
 
 
-@router.get("/")
+@router.get(
+    "/",
+    response_model=list[CartResponse]
+)
 def get_cart(
     db: Session = Depends(get_db),
     current_customer: Customer = Depends(
@@ -100,8 +108,7 @@ def get_cart(
     cart_items = (
         db.query(CartItem)
         .filter(
-            CartItem.customer_id ==
-            current_customer.id
+            CartItem.customer_id == current_customer.id
         )
         .all()
     )
@@ -123,8 +130,7 @@ def update_cart_item(
         db.query(CartItem)
         .filter(
             CartItem.id == cart_item_id,
-            CartItem.customer_id ==
-            current_customer.id
+            CartItem.customer_id == current_customer.id
         )
         .first()
     )
@@ -153,6 +159,8 @@ def update_cart_item(
 
     db.commit()
 
+    db.refresh(item)
+
     return {
         "message": "Cart updated successfully"
     }
@@ -171,8 +179,7 @@ def remove_cart_item(
         db.query(CartItem)
         .filter(
             CartItem.id == cart_item_id,
-            CartItem.customer_id ==
-            current_customer.id
+            CartItem.customer_id == current_customer.id
         )
         .first()
     )
@@ -184,6 +191,7 @@ def remove_cart_item(
         )
 
     db.delete(item)
+
     db.commit()
 
     return {
@@ -202,8 +210,7 @@ def clear_cart(
     (
         db.query(CartItem)
         .filter(
-            CartItem.customer_id ==
-            current_customer.id
+            CartItem.customer_id == current_customer.id
         )
         .delete()
     )

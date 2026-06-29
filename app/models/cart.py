@@ -2,6 +2,8 @@ from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import ForeignKey
 
+from sqlalchemy.orm import relationship
+
 from app.database import Base
 
 
@@ -28,4 +30,12 @@ class CartItem(Base):
         Integer,
         nullable=False,
         default=1
+    )
+
+    product = relationship(
+        "Product"
+    )
+
+    customer = relationship(
+        "Customer"
     )

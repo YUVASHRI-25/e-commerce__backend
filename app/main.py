@@ -13,7 +13,7 @@ from app.models.cart import CartItem
 from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.payment import Payment
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.routers.auth import router as auth_router
 from app.routers.address import router as address_router
 from app.routers.category import router as category_router
@@ -27,6 +27,15 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="E-Commerce Backend"
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # -----------------------------
